@@ -7,9 +7,20 @@ const r = @cImport({
 const screenWidth = 960;
 const screenHeight = 540;
 
+var gameOver: bool = false;
+
 const Player = struct {
     position: r.Vector2,
     size: r.Vector2,
+    life: i32,
+
+    pub fn new_bro(position: r.Vector2, size: r.Vector2, life: i32) Player {
+        return .{
+            .position = position,
+            .size = size,
+            .life = life,
+        };
+    }
 
     pub fn update_player_position(self: *Player) void {
         if (r.IsKeyDown(r.KEY_LEFT)) {
@@ -25,7 +36,26 @@ const Player = struct {
             self.position.y += 1;
         }
     }
+
+    pub fn draw(self: *const Player) void {
+        r.DrawRectangle(@intFromFloat(self.position.x), @intFromFloat(self.position.y), @intFromFloat(self.size.x), @intFromFloat(self.size.y), r.BLUE);
+    }
+
+    pub fn reset_position(self: *Player, startPosition: r.Vector2) void {
+        self.position = startPosition;
+    }
 };
+
+// Função para checar colisão entre o jogador e o polígono
+fn check_collision(player: Player, polyCenter: r.Vector2, polyRadius: f32) bool {
+    const playerCenterX = player.position.x + player.size.x / 2;
+    const playerCenterY = player.position.y + player.size.y / 2;
+    const distX = playerCenterX - polyCenter.x;
+    const distY = playerCenterY - polyCenter.y;
+    const distance = std.math.sqrt(distX * distX + distY * distY);
+
+    return distance < polyRadius + player.size.x / 2;
+}
 
 pub fn main() !void {
     r.InitWindow(screenWidth, screenHeight, "poggers");
@@ -35,34 +65,37 @@ pub fn main() !void {
 
     defer r.CloseWindow();
 
-    var kirito = Player{
-        .position = r.Vector2{ .x = 10, .y = 10 },
-        .size = r.Vector2{ .x = 50, .y = 50 },
-    };
+    const startPosition = r.Vector2{ .x = 10, .y = 10 };
+    const polyCenter = r.Vector2{ .x = 960 / 4.0 * 3, .y = 330 };
+    const polyRadius: f32 = 80;
+
+    var kirito = Player.new_bro(startPosition, r.Vector2{ .x = 50, .y = 50 }, 22);
 
     while (!r.WindowShouldClose()) {
-        rotation += 0.8;
+        if (gameOver) {
+            kirito.reset_position(startPosition);
+            gameOver = false;
+        }
 
-        // DRAW START
-        r.BeginDrawing();
-
-        r.ClearBackground(r.WHITE);
-        r.DrawText("bela bola", 20, 20, 20, r.GRAY);
-
-        r.DrawCircle(960 / 5, 120, 35, r.RED);
-        r.DrawCircleGradient(960 / 5, 220, 60, r.GREEN, r.SKYBLUE);
-        r.DrawCircleLines(960 / 5, 340, 80, r.DARKBLUE);
-
-        r.DrawPoly((r.Vector2){ .x = 960 / 4.0 * 3, .y = 330 }, 6, 80, rotation, r.BROWN);
-        r.DrawPolyLines((r.Vector2){ .x = 960 / 4.0 * 3, .y = 330 }, 6, 90, rotation, r.BROWN);
-        r.DrawPolyLinesEx((r.Vector2){ .x = 960 / 4.0 * 3, .y = 330 }, 6, 85, rotation, 6, r.BEIGE);
-
-        r.DrawRectangle(@intFromFloat(kirito.position.x), @intFromFloat(kirito.position.y), @intFromFloat(kirito.size.x), @intFromFloat(kirito.size.y), r.BLUE);
-
+        // Player movement
         kirito.update_player_position();
 
+        if (check_collision(kirito, polyCenter, polyRadius)) {
+            gameOver = true;
+        }
+
+        r.BeginDrawing();
+
         r.ClearBackground(r.BLACK);
+        r.DrawText("uh la la", 20, 20, 20, r.GRAY);
+
+        r.DrawPoly(polyCenter, 6, polyRadius, rotation, r.BROWN);
+        r.DrawPolyLines(polyCenter, 6, polyRadius + 10, rotation, r.BROWN);
+        r.DrawPolyLinesEx(polyCenter, 6, polyRadius + 5, rotation, 6, r.BEIGE);
+
+        kirito.draw();
+
         r.EndDrawing();
-        // DRAW END
+        rotation += 0.8;
     }
 }
