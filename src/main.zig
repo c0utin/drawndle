@@ -46,7 +46,7 @@ const Player = struct {
     }
 };
 
-// Função para checar colisão entre o jogador e o polígono
+// Collision Poly and Player
 fn check_collision(player: Player, polyCenter: r.Vector2, polyRadius: f32) bool {
     const playerCenterX = player.position.x + player.size.x / 2;
     const playerCenterY = player.position.y + player.size.y / 2;
