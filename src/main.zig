@@ -23,17 +23,17 @@ const Player = struct {
     }
 
     pub fn update_player_position(self: *Player) void {
-        if (r.IsKeyDown(r.KEY_LEFT)) {
-            self.position.x -= 1;
+        if (r.IsKeyDown(r.KEY_LEFT) and self.position.x > 0) {
+            self.position.x -= 10;
         }
-        if (r.IsKeyDown(r.KEY_RIGHT)) {
-            self.position.x += 1;
+        if (r.IsKeyDown(r.KEY_RIGHT) and self.position.x + self.size.x < screenWidth) {
+            self.position.x += 10;
         }
-        if (r.IsKeyDown(r.KEY_UP)) {
-            self.position.y -= 1;
+        if (r.IsKeyDown(r.KEY_UP) and self.position.y > 0) {
+            self.position.y -= 10;
         }
-        if (r.IsKeyDown(r.KEY_DOWN)) {
-            self.position.y += 1;
+        if (r.IsKeyDown(r.KEY_DOWN) and self.position.y + self.size.y < screenHeight) {
+            self.position.y += 10;
         }
     }
 
