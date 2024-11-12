@@ -3,7 +3,6 @@ const raySdk = @import("raylib");
 
 pub fn build(b: *std.Build) void {
     const target = b.standardTargetOptions(.{});
-
     const optimize = b.standardOptimizeOption(.{});
 
     const exe = b.addExecutable(.{
@@ -20,7 +19,6 @@ pub fn build(b: *std.Build) void {
     b.installArtifact(exe);
 
     const run_cmd = b.addRunArtifact(exe);
-
     run_cmd.step.dependOn(b.getInstallStep());
 
     if (b.args) |args| {

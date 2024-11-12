@@ -1,9 +1,11 @@
 # Goppers
 
-- [ ] Border collision
+- [x] Border collision
 - [ ] Walls
-- [ ] Textures
+- [x] Textures
 - [ ] Array to scenario
 - [ ] Parse png pixel art to Array
 - [ ] Pixel color in pixel art png represent a map entity or literally the map/scenario
-- [ ] Camera
+- [ ] Camera & zoom
+- [ ] WebAssembly
+- [ ] Some way to test this

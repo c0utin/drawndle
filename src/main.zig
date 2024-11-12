@@ -4,8 +4,8 @@ const r = @cImport({
 });
 
 // Global constants
-const screenWidth = 960;
-const screenHeight = 540;
+const screenWidth: f32 = 960;
+const screenHeight: f32 = 540;
 
 var gameOver: bool = false;
 
@@ -61,6 +61,11 @@ pub fn main() !void {
     r.InitWindow(screenWidth, screenHeight, "poggers");
     r.SetTargetFPS(144);
 
+    const background = r.LoadImage("assets/map.png");
+    const texture = r.LoadTextureFromImage(background);
+    defer r.UnloadTexture(texture);
+    r.UnloadImage(background);
+
     var rotation: f32 = 0.0;
 
     defer r.CloseWindow();
@@ -88,6 +93,12 @@ pub fn main() !void {
 
         r.ClearBackground(r.BLACK);
         r.DrawText("uh la la", 20, 20, 20, r.GRAY);
+
+        const scaleX = screenWidth / 16 * 1;
+        const scaleY = screenHeight / 9 * 1;
+        const scale = if (scaleX < scaleY) scaleX else scaleY;
+
+        r.DrawTextureEx(texture, r.Vector2{ .x = 0, .y = 0 }, 0.0, scale, r.WHITE);
 
         r.DrawPoly(polyCenter, 6, polyRadius, rotation, r.BROWN);
         r.DrawPolyLines(polyCenter, 6, polyRadius + 10, rotation, r.BROWN);
