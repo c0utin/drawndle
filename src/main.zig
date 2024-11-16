@@ -46,6 +46,28 @@ const Player = struct {
     }
 };
 
+fn draw_cells(cols: i32, rows: i32) void {
+    const cellW: f32 = screenWidth / @as(f32, @floatFromInt(cols));
+    const cellH: f32 = screenHeight / @as(f32, @floatFromInt(rows));
+
+    const borderThickness: f32 = 2.0; // Espessura da borda
+
+    for (0..@intCast(rows)) |row| {
+        for (0..@intCast(cols)) |col| {
+            const x = @as(f32, @floatFromInt(col)) * cellW;
+            const y = @as(f32, @floatFromInt(row)) * cellH;
+
+            // Desenha a borda
+            r.DrawRectangleLines(@intFromFloat(x), @intFromFloat(y), @intFromFloat(cellW), @intFromFloat(cellH), r.DARKGRAY // Cor da borda
+            );
+
+            // Desenha o interior da célula
+            r.DrawRectangle(@intFromFloat(x + borderThickness), @intFromFloat(y + borderThickness), @intFromFloat(cellW - borderThickness * 2), @intFromFloat(cellH - borderThickness * 2), r.BLUE // Cor da célula
+            );
+        }
+    }
+}
+
 // Collision Poly and Player
 fn check_collision(player: Player, polyCenter: r.Vector2, polyRadius: f32) bool {
     const playerCenterX = player.position.x + player.size.x / 2;
@@ -59,12 +81,12 @@ fn check_collision(player: Player, polyCenter: r.Vector2, polyRadius: f32) bool 
 
 pub fn main() !void {
     r.InitWindow(screenWidth, screenHeight, "poggers");
-    r.SetTargetFPS(144);
+    r.SetTargetFPS(60);
 
-    const background = r.LoadImage("assets/map.png");
-    const texture = r.LoadTextureFromImage(background);
-    defer r.UnloadTexture(texture);
-    r.UnloadImage(background);
+    // const background = r.LoadImage("assets/map.png");
+    // const texture = r.LoadTextureFromImage(background);
+    // defer r.UnloadTexture(texture);
+    // r.UnloadImage(background);
 
     var rotation: f32 = 0.0;
 
@@ -94,11 +116,14 @@ pub fn main() !void {
         r.ClearBackground(r.BLACK);
         r.DrawText("uh la la", 20, 20, 20, r.GRAY);
 
-        const scaleX = screenWidth / 16 * 1;
-        const scaleY = screenHeight / 9 * 1;
-        const scale = if (scaleX < scaleY) scaleX else scaleY;
+        // cells
+        draw_cells(10, 5);
 
-        r.DrawTextureEx(texture, r.Vector2{ .x = 0, .y = 0 }, 0.0, scale, r.WHITE);
+        // const scaleX = screenWidth / 16 * 1;
+        // const scaleY = screenHeight / 9 * 1;
+        // const scale = if (scaleX < scaleY) scaleX else scaleY;
+
+        // r.DrawTextureEx(texture, r.Vector2{ .x = 0, .y = 0 }, 0.0, scale, r.WHITE);
 
         r.DrawPoly(polyCenter, 6, polyRadius, rotation, r.BROWN);
         r.DrawPolyLines(polyCenter, 6, polyRadius + 10, rotation, r.BROWN);
