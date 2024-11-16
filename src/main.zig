@@ -38,7 +38,7 @@ const Player = struct {
     }
 
     pub fn draw(self: *const Player) void {
-        r.DrawRectangle(@intFromFloat(self.position.x), @intFromFloat(self.position.y), @intFromFloat(self.size.x), @intFromFloat(self.size.y), r.BLUE);
+        r.DrawRectangle(@intFromFloat(self.position.x), @intFromFloat(self.position.y), @intFromFloat(self.size.x), @intFromFloat(self.size.y), r.WHITE);
     }
 
     pub fn reset_position(self: *Player, startPosition: r.Vector2) void {
@@ -50,18 +50,16 @@ fn draw_cells(cols: i32, rows: i32) void {
     const cellW: f32 = screenWidth / @as(f32, @floatFromInt(cols));
     const cellH: f32 = screenHeight / @as(f32, @floatFromInt(rows));
 
-    const borderThickness: f32 = 2.0; // Espessura da borda
+    const borderThickness: f32 = 0.2;
 
     for (0..@intCast(rows)) |row| {
         for (0..@intCast(cols)) |col| {
             const x = @as(f32, @floatFromInt(col)) * cellW;
             const y = @as(f32, @floatFromInt(row)) * cellH;
 
-            // Desenha a borda
             r.DrawRectangleLines(@intFromFloat(x), @intFromFloat(y), @intFromFloat(cellW), @intFromFloat(cellH), r.DARKGRAY // Cor da borda
             );
 
-            // Desenha o interior da célula
             r.DrawRectangle(@intFromFloat(x + borderThickness), @intFromFloat(y + borderThickness), @intFromFloat(cellW - borderThickness * 2), @intFromFloat(cellH - borderThickness * 2), r.BLUE // Cor da célula
             );
         }
@@ -118,6 +116,15 @@ pub fn main() !void {
 
         // cells
         draw_cells(10, 5);
+
+        // Mapear a posição do mouse para a grid de células
+        if (r.IsMouseButtonPressed(r.MOUSE_BUTTON_LEFT)) {
+            const mousePosition = r.GetMousePosition();
+            const mouseCellX = @as(i32, @intFromFloat(mousePosition.x / (screenWidth / 10) + 1)); // 10 é o número de colunas
+            const mouseCellY = @as(i32, @intFromFloat(mousePosition.y / (screenHeight / 5) + 1)); // 5 é o número de linhas
+
+            std.debug.print("Mouse Position: x = {}, y = {}, Mouse Cell: x = {}, y = {}\n", .{ mousePosition.x, mousePosition.y, mouseCellX, mouseCellY });
+        }
 
         // const scaleX = screenWidth / 16 * 1;
         // const scaleY = screenHeight / 9 * 1;
